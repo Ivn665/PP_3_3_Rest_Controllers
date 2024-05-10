@@ -4,9 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.SpringVersion;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
+import org.thymeleaf.extras.springsecurity5.util.SpringSecurityVersionUtils;
 
 import java.io.IOException;
 @SpringBootApplication(scanBasePackages="ru.kata.spring.boot_security.demo")

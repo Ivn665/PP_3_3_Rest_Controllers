@@ -72,10 +72,7 @@ public class MainPageRestController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<HttpStatus> deleteUser(@RequestBody Long id, Authentication authentication, HttpSession session) {
-        if (authentication.getName().equals(userService.getById(id).getUsername())) {
-            session.invalidate();
-        }
+    public ResponseEntity<HttpStatus> deleteUser(@RequestBody long id) {
         userService.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }

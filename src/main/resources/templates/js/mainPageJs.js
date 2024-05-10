@@ -10,6 +10,8 @@ let editButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#editPan
 const editForm = document.querySelector('#editForm')
 const editBtn = editForm.querySelector('#editBtn')
 
+const token = document.querySelector(`meta[name="_csrf"]`).content
+
 const id = document.querySelector('#currentUserRow').querySelector('td').innerText
 const url = 'http://localhost:8080'
 const users = new UsersList(url, allUsersTab)
@@ -76,14 +78,13 @@ async function deleteUser(event) {
     event.preventDefault()
     const btn = deleteBtn.querySelector('input[type$="submit"]')
     btn.disabled = true;
-    /*    const _csrf = deleteBtn.querySelector('input[name$="_csrf"]').value
-        const _method = deleteBtn.querySelector('input[name$="method"]').value*/
     const deletedId = deleteBtn.querySelector('input[name$="id"]').value
     let response = await fetch(deleteBtn.action, {
         method: 'POST',
-        body: JSON.stringify(id),
+        body: JSON.stringify(deletedId),
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRF-TOKEN' : token
         }
     })
     response = await response.json()
@@ -97,8 +98,6 @@ async function deleteUser(event) {
     }
     btn.disabled = false
     deleteBtn.parentElement.querySelector('button[data-bs-dismiss$="modal"]').click()
-
-
 }
 
 
