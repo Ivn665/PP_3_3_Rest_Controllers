@@ -1,105 +1,110 @@
 import {UsersList} from "./UsersList.js";
+import {fillForm, makeUserObject, updateCurrenUser} from "./utils.js";
 
 const allUsersTab = document.querySelector('#allUsersTab')
 
-let deleteButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#deletePanel\']')
+let deleteButtons
 const deleteForm = document.querySelector('#deleteForm')
-const deleteBtn = document.querySelector('#deleteBtn')
+let deleteBtn = document.querySelector('#deleteBtn')
 
-let editButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#editPanel\']')
+let editButtons
 const editForm = document.querySelector('#editForm')
-const editBtn = editForm.querySelector('#editBtn')
+const editBtn = editForm.parentElement.querySelector('button[type$="submit"]')
 
-const token = document.querySelector(`meta[name="_csrf"]`).content
+const csrfHeader = document.querySelector(`meta[name$="_csrf_header"]`).content
+const token = document.querySelector(`meta[name$="_csrf"]`).content
 
-const id = document.querySelector('#currentUserRow').querySelector('td').innerText
+const id = document.querySelector('#currentUserRow > td').innerText
 const url = 'http://localhost:8080'
 const users = new UsersList(url, allUsersTab)
 
 
-document.addEventListener('DOMContentLoaded', initialRender)
-
-function initialRender() {
-    users.refreshList()
-}
-
+await users.updateList()
+updateEvents()
 
 //Обрабатываем нажатия на кнопки Delete и Edit в таблице всех Юзеров
-for (let i = 0; i < deleteButtons.length; i++) {
-    deleteButtons[i].addEventListener('click', customizeDeletePanel(i))
+function updateEvents() {
+    console.debug('updateEvents')
+    deleteButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#deletePanel\']')
+    editButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#editPanel\']')
+    for (let i = 0; i < deleteButtons.length; i++) {
+        deleteButtons[i].removeEventListener('click', customizeDeletePanel)
+        editButtons[i].removeEventListener('click', customizeEditPanel)
+        deleteButtons[i].addEventListener('click', customizeDeletePanel(i))
+        editButtons[i].addEventListener('click', customizeEditPanel(i))
+    }
 }
-
 function customizeDeletePanel(index) {
+    console.debug('customizeDeletePanel')
     return function () {
-        fillForm(index, deleteForm)
+        console.log(users.list)
+        fillForm(users.list[index], deleteForm)
         deleteBtn.querySelector('input[name$="id"]').value = users.list[index].id
     }
 }
-
-for (let i = 0; i < editButtons.length; i++) {
-    editButtons[i].addEventListener('click', customizeEditPanel(i))
-}
-
 function customizeEditPanel(index) {
+    console.debug('customizeEditPanel')
     return function () {
-        fillForm(index, editForm)
-    }
-}
-
-//Заполняем поля в модальных окнах
-function fillForm(index, form) {
-    const user = users.list[index]
-    const inputs = form.querySelectorAll('input')
-
-    inputs[0].value = user.id
-    inputs[1].value = user.firstName
-    inputs[2].value = user.lastName
-    inputs[3].value = user.age
-    inputs[4].value = user.email
-
-    const options = form.querySelectorAll('select > option')
-    const roles = user.roles.map(e => e.name.replace('ROLE_', ''))
-    for (let i = 0; i < options.length; i++) {
-        options[i].selected = false
-        for (let j = 0; j < roles.length; j++) {
-            if (options[i].text === roles[j]) {
-                options[i].selected = true
-                break
-            }
-        }
+        fillForm(users.list[index], editForm.querySelector('div'))
     }
 }
 
 //Обрабатываем нажаите delete в модальном окне
-
 deleteBtn.addEventListener('submit', deleteUser)
-
 async function deleteUser(event) {
+    console.debug('deleteUser')
     event.preventDefault()
     const btn = deleteBtn.querySelector('input[type$="submit"]')
     btn.disabled = true;
     const deletedId = deleteBtn.querySelector('input[name$="id"]').value
     let response = await fetch(deleteBtn.action, {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify(deletedId),
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN' : token
+            'Content-Type' : 'application/json',
+            [csrfHeader] : token
         }
     })
-    response = await response.json()
-    if (response) {
-        if (deletedId == id) {
-            document.querySelector('#logout').querySelector('button').click()
-        }
-        users.deleteUserById(deletedId)
+    if (deletedId == id) {
+        document.querySelector('#logout').querySelector('button').click()
+    }
+    if (response && response.ok) {
+        await users.deleteUserById(deletedId)
     } else {
         alert('The user has not been deleted')
     }
+    updateEvents()
     btn.disabled = false
     deleteBtn.parentElement.querySelector('button[data-bs-dismiss$="modal"]').click()
 }
 
+//Обрабатываем нажаите edit в модальном окне
+editForm.addEventListener('submit', editUser)
 
+async function editUser(event) {
+    console.debug('editUser')
+    event.preventDefault()
+    editBtn.disabled = true
+    const editUser = makeUserObject(editForm.querySelector('div'))
+    let response = await fetch(editForm.action, {
+        method: 'PUT',
+        body: JSON.stringify(editUser),
+        headers: {
+            'Content-Type' : 'application/json',
+            [csrfHeader] : token
+        }
+    })
+    if (response && response.ok) {
+        const index = await users.editById(editUser.id)
+        if(editUser.id == id) {
+            updateCurrenUser(users.list[index])
+        }
+    } else {
+        alert('The user has not been changed')
+    }
+    updateEvents()
+    editBtn.disabled = false
+    editBtn.parentElement.querySelector('button[data-bs-dismiss$="modal"]').click()
+}
 
 

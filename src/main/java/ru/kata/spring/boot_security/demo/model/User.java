@@ -14,7 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
@@ -33,7 +34,7 @@ public class User implements UserDetails {
 
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
