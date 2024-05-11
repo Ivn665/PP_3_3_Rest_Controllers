@@ -26,7 +26,6 @@ export function fillForm(user, form) {
 export function makeUserObject(form) {
     console.debug('makeUserObject')
     let user = {
-        id : form.querySelector(`input[name$="id"]`).value,
         firstName : form.querySelector(`input[name$="firstName"]`).value,
         lastName : form.querySelector(`input[name$="lastName"]`).value,
         age : form.querySelector(`input[name$="age"]`).value,
@@ -38,6 +37,11 @@ export function makeUserObject(form) {
         if (role.selected == true) {
             user.roles.push('ROLE_' + role.text)
         }
+    }
+    try {
+        user.id = form.querySelector(`input[name$="id"]`).value
+    } catch {
+        //
     }
     return user
 }

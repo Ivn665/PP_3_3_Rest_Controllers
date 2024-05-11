@@ -54,14 +54,14 @@ public class MainPageRestController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<HttpStatus> saveUser(@RequestBody UserDto userDto, BindingResult bindingResult) {
+    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto, BindingResult bindingResult) {
         User user = convertToUser(userDto);
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new UserNotSavedException(createExceptionMsg(bindingResult));
         }
         userService.saveUser(user);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().body(convertToDto(user));
     }
 
     @PutMapping("/edit")
@@ -76,10 +76,7 @@ public class MainPageRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<HttpStatus> deleteUser(@RequestBody long id, Authentication authentication, HttpSession session) {
-        if (authentication.getName().equals(userService.getById(id).getUsername())) {
-            session.invalidate();
-        }
+    public ResponseEntity<HttpStatus> deleteUser(@RequestBody long id) {
         userService.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }

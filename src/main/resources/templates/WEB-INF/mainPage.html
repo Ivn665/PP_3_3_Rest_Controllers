@@ -118,32 +118,37 @@
                             <h3>Add new user</h3>
                         </div>
                         <div class="card-body container text-center" style="max-width: 300px">
-                            <form class="form" th:method="POST" action="/save" role="form">
+                            <form class="form" method="POST" action="/save" role="form" id="newUserForm">
                                 <div class="form-group">
                                     <div class="mb-3">
                                         <label for="firstNameNewUser"><b>First name</b></label>
-                                        <input class="form-control" type="text" placeholder="First name" id="firstNameNewUser"/>
+                                        <input class="form-control" type="text" placeholder="First name" name="firstName"
+                                               id="firstNameNewUser"/>
                                     </div>
                                     <div class="mb-3">
                                         <label for="lastNameNewUser"><b>Last name</b></label>
-                                        <input class="form-control" type="text" placeholder="Last name" id="lastNameNewUser"/>
+                                        <input class="form-control" type="text" placeholder="Last name" name="lastName"
+                                               id="lastNameNewUser"/>
                                     </div>
                                     <div class="mb-3">
                                         <label for="ageNewUser"><b>Age</b></label>
-                                        <input class="form-control" type="number" placeholder="Age" id="ageNewUser"/>
+                                        <input class="form-control" type="number" placeholder="Age" name="age"
+                                               id="ageNewUser"/>
                                     </div>
                                     <div class="mb-3">
                                         <label for="emailNewUser"><b>Email</b></label>
-                                        <input class="form-control" type="email" placeholder="Email" id="emailNewUser"/>
+                                        <input class="form-control" type="email" placeholder="Email" name="email"
+                                               id="emailNewUser"/>
                                     </div>
                                     <div class="mb-3">
                                         <label for="passwordNewUser"><b>Password</b></label>
-                                        <input class="form-control" type="password" placeholder="Password" id="passwordNewUser"/>
+                                        <input class="form-control" type="password" placeholder="Password" name="password"
+                                               id="passwordNewUser"/>
                                     </div>
                                     <div class="mb-3">
                                         <label for="rolesNewUser"><b>Role</b></label>
                                         <select class="form-select form-control" multiple size="2" aria-label="Role"
-                                               id="rolesNewUser">
+                                               name="roles" id="rolesNewUser">
                                             <option
                                                 th:each="role : ${roles}"
                                                 th:text="${role.getName().toString().replace('ROLE_', '')}"

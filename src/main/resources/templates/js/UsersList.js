@@ -58,7 +58,6 @@ export class UsersList {
             </td>
         </tr>
         `
-
         return row
     }
 
@@ -75,7 +74,6 @@ export class UsersList {
 
     deleteUserFromTable(index) {
         console.debug('deleteUserFromTable')
-        console.log(index)
         this.allUsersTab.querySelectorAll(`tr`)[index].remove()
     }
 
@@ -93,5 +91,10 @@ export class UsersList {
         const rows = this.allUsersTab.querySelectorAll('tr')
         rows[index].innerHTML = this.renderOneRow(this.list[index])
         return index
+    }
+
+    addNewUser(newUser) {
+        this.list.push(newUser)
+        this.allUsersTab.insertAdjacentHTML('beforeend', this.renderOneRow(newUser))
     }
 }

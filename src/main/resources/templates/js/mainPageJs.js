@@ -1,6 +1,7 @@
 import {UsersList} from "./UsersList.js";
 import {fillForm, makeUserObject, updateCurrenUser} from "./utils.js";
 
+const url = 'http://localhost:8080'
 const allUsersTab = document.querySelector('#allUsersTab')
 
 let deleteButtons
@@ -11,12 +12,15 @@ let editButtons
 const editForm = document.querySelector('#editForm')
 const editBtn = editForm.parentElement.querySelector('button[type$="submit"]')
 
+const newUserForm = document.querySelector('#newUserForm')
+const addNewUserBtn = newUserForm.querySelector('input[type$="submit"]')
+
 const csrfHeader = document.querySelector(`meta[name$="_csrf_header"]`).content
 const token = document.querySelector(`meta[name$="_csrf"]`).content
 
 const id = document.querySelector('#currentUserRow > td').innerText
-const url = 'http://localhost:8080'
-const users = new UsersList(url, allUsersTab)
+
+const users = new UsersList(url, document.querySelector('#allUsersTab'))
 
 
 await users.updateList()
@@ -34,6 +38,7 @@ function updateEvents() {
         editButtons[i].addEventListener('click', customizeEditPanel(i))
     }
 }
+
 function customizeDeletePanel(index) {
     console.debug('customizeDeletePanel')
     return function () {
@@ -42,6 +47,7 @@ function customizeDeletePanel(index) {
         deleteBtn.querySelector('input[name$="id"]').value = users.list[index].id
     }
 }
+
 function customizeEditPanel(index) {
     console.debug('customizeEditPanel')
     return function () {
@@ -51,25 +57,26 @@ function customizeEditPanel(index) {
 
 //Обрабатываем нажаите delete в модальном окне
 deleteBtn.addEventListener('submit', deleteUser)
+
 async function deleteUser(event) {
     console.debug('deleteUser')
     event.preventDefault()
     const btn = deleteBtn.querySelector('input[type$="submit"]')
     btn.disabled = true;
-    const deletedId = deleteBtn.querySelector('input[name$="id"]').value
+    const deleteId = deleteBtn.querySelector('input[name$="id"]').value
     let response = await fetch(deleteBtn.action, {
         method: 'DELETE',
-        body: JSON.stringify(deletedId),
+        body: JSON.stringify(deleteId),
         headers: {
-            'Content-Type' : 'application/json',
-            [csrfHeader] : token
+            'Content-Type': 'application/json',
+            [csrfHeader]: token
         }
     })
-    if (deletedId == id) {
+    if (deleteId == id) {
         document.querySelector('#logout').querySelector('button').click()
     }
     if (response && response.ok) {
-        await users.deleteUserById(deletedId)
+        await users.deleteUserById(deleteId)
     } else {
         alert('The user has not been deleted')
     }
@@ -90,21 +97,50 @@ async function editUser(event) {
         method: 'PUT',
         body: JSON.stringify(editUser),
         headers: {
-            'Content-Type' : 'application/json',
-            [csrfHeader] : token
+            'Content-Type': 'application/json',
+            [csrfHeader]: token
         }
     })
     if (response && response.ok) {
         const index = await users.editById(editUser.id)
-        if(editUser.id == id) {
+        if (editUser.id == id) {
             updateCurrenUser(users.list[index])
         }
+        updateEvents()
+        editBtn.parentElement.querySelector('button[data-bs-dismiss$="modal"]').click()
     } else {
-        alert('The user has not been changed')
+        response = await response.json()
+        alert(response.msg)
     }
-    updateEvents()
     editBtn.disabled = false
-    editBtn.parentElement.querySelector('button[data-bs-dismiss$="modal"]').click()
 }
 
+//Обрабатываем нажаите Add new user во вкладке New user
+newUserForm.addEventListener('submit', addNewUser)
 
+async function addNewUser(event) {
+    console.debug('addNewUser')
+    event.preventDefault()
+    addNewUserBtn.disabled = true
+    const newUser = makeUserObject(newUserForm.querySelector('div'))
+
+    let response = await fetch(newUserForm.action, {
+        method: 'POST',
+        body: JSON.stringify(newUser),
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: token
+        }
+    })
+    if (response && response.ok) {
+        response = await response.json()
+        users.addNewUser(response)
+        updateEvents()
+        document.querySelector('a[href$="#usersTable"]').click()
+    } else {
+        response = await response.json()
+        alert(response.msg)
+    }
+    addNewUserBtn.disabled = false
+
+}
