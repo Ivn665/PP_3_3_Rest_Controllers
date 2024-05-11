@@ -42,7 +42,6 @@ function updateEvents() {
 function customizeDeletePanel(index) {
     console.debug('customizeDeletePanel')
     return function () {
-        console.log(users.list)
         fillForm(users.list[index], deleteForm)
         deleteBtn.querySelector('input[name$="id"]').value = users.list[index].id
     }
@@ -110,7 +109,7 @@ async function editUser(event) {
         editBtn.parentElement.querySelector('button[data-bs-dismiss$="modal"]').click()
     } else {
         response = await response.json()
-        alert(response.msg)
+        alert(response.message)
     }
     editBtn.disabled = false
 }
@@ -139,7 +138,7 @@ async function addNewUser(event) {
         document.querySelector('a[href$="#usersTable"]').click()
     } else {
         response = await response.json()
-        alert(response.msg)
+        alert(response.message)
     }
     addNewUserBtn.disabled = false
 

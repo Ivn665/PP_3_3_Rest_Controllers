@@ -6,11 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserErrorResponse {
-    private String msg;
+    private String message;
     private long timestamp;
 
-    public UserErrorResponse(String msg, long timestamp) {
-        this.msg = msg;
+    public UserErrorResponse(String message, long timestamp) {
+        this.message = message;
         this.timestamp = timestamp;
     }
 }
