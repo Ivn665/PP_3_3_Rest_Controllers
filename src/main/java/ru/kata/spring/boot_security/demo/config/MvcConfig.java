@@ -18,7 +18,7 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/js/**")
                 .addResourceLocations("classpath:/templates/js/")
-                .setCachePeriod(3)//mention in seconds TODO поменять на 3900
+                .setCachePeriod(3)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver());
     }

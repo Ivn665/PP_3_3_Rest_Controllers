@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -13,9 +14,9 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
@@ -29,7 +30,6 @@ public class User implements UserDetails {
 
     private byte age;
 
-    @Column(unique = true)
     private String email;
 
     private String password;
@@ -40,10 +40,6 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-
-    public User() {
-        //
-    }
 
     public User(String firstName, String lastName, byte age, String email, String password, Set<Role> roles) {
         this.firstName = firstName;

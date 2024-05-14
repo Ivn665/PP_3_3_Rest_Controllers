@@ -28,7 +28,6 @@ updateEvents()
 
 //Обрабатываем нажатия на кнопки Delete и Edit в таблице всех Юзеров
 function updateEvents() {
-    console.debug('updateEvents')
     deleteButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#deletePanel\']')
     editButtons = allUsersTab.querySelectorAll('button[data-bs-target=\'#editPanel\']')
     for (let i = 0; i < deleteButtons.length; i++) {
@@ -40,7 +39,6 @@ function updateEvents() {
 }
 
 function customizeDeletePanel(index) {
-    console.debug('customizeDeletePanel')
     return function () {
         fillForm(users.list[index], deleteForm)
         deleteBtn.querySelector('input[name$="id"]').value = users.list[index].id
@@ -48,7 +46,6 @@ function customizeDeletePanel(index) {
 }
 
 function customizeEditPanel(index) {
-    console.debug('customizeEditPanel')
     return function () {
         fillForm(users.list[index], editForm.querySelector('div'))
     }
@@ -58,7 +55,6 @@ function customizeEditPanel(index) {
 deleteBtn.addEventListener('submit', deleteUser)
 
 async function deleteUser(event) {
-    console.debug('deleteUser')
     event.preventDefault()
     const btn = deleteBtn.querySelector('input[type$="submit"]')
     btn.disabled = true;
@@ -88,7 +84,6 @@ async function deleteUser(event) {
 editForm.addEventListener('submit', editUser)
 
 async function editUser(event) {
-    console.debug('editUser')
     event.preventDefault()
     editBtn.disabled = true
     const editUser = makeUserObject(editForm.querySelector('div'))
@@ -118,7 +113,6 @@ async function editUser(event) {
 newUserForm.addEventListener('submit', addNewUser)
 
 async function addNewUser(event) {
-    console.debug('addNewUser')
     event.preventDefault()
     addNewUserBtn.disabled = true
     const newUser = makeUserObject(newUserForm.querySelector('div'))

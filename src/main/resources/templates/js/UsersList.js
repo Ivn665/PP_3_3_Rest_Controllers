@@ -9,7 +9,6 @@ export class UsersList {
     }
 
     async updateList() {
-        console.debug('updateList')
         const response = await fetch(`${this.url}/users`)
         if (response.ok) {
             this.list = await response.json()
@@ -20,7 +19,6 @@ export class UsersList {
     }
 
     renderUsersList() {
-        console.debug('renderUsersList')
         const table = []
         for (let i = 0; i < this.list.length; i++) {
             table.push(this.renderOneRow(this.list[i]))
@@ -29,7 +27,6 @@ export class UsersList {
     }
 
     renderOneRow(user) {
-        console.debug('renderOneRow')
         let row = `
         <tr>
             <td>${user.id}</td>
@@ -42,7 +39,7 @@ export class UsersList {
         for (let role of user.roles) {
             row += `
                 <span>
-                    <span>${role.replace('ROLE_', '')}</span>
+                    <span>${role.name.replace('ROLE_', '')}</span>
                 </span>`
         }
 
@@ -62,7 +59,6 @@ export class UsersList {
     }
 
     deleteUserById(id) {
-        console.debug('deleteUserById')
         for (let i = 0; i < this.list.length; i++) {
             if (this.list[i].id == id) {
                 this.list.splice(i, 1)
@@ -73,12 +69,10 @@ export class UsersList {
     }
 
     deleteUserFromTable(index) {
-        console.debug('deleteUserFromTable')
         this.allUsersTab.querySelectorAll(`tr`)[index].remove()
     }
 
     async editById(id) {
-        console.debug('editById')
         let index
         for (let i = 0; i < this.list.length; i++) {
             if (this.list[i].id == id) {
@@ -86,7 +80,7 @@ export class UsersList {
                 break
             }
         }
-        const response = await fetch(`${this.url}/user/${this.list[index].id}`)
+        const response = await fetch(`${this.url}/user/${id}`)
         this.list[index] = await response.json()
         const rows = this.allUsersTab.querySelectorAll('tr')
         rows[index].innerHTML = this.renderOneRow(this.list[index])

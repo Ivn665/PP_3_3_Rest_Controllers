@@ -1,7 +1,5 @@
-let count = 1
 //Заполняем поля в модальных окнах
 export function fillForm(user, form) {
-    console.debug('fillForm')
     const inputs = form.querySelectorAll('input')
 
     inputs[0].value = user.id
@@ -11,7 +9,7 @@ export function fillForm(user, form) {
     inputs[4].value = user.email
 
     const options = form.querySelectorAll('select > option')
-    const roles = user.roles.map(e => e.replace('ROLE_', ''))
+    const roles = user.roles.map(e => e.name.replace('ROLE_', ''))
     for (let i = 0; i < options.length; i++) {
         options[i].selected = false
         for (let j = 0; j < roles.length; j++) {
@@ -24,18 +22,21 @@ export function fillForm(user, form) {
 }
 
 export function makeUserObject(form) {
-    console.debug('makeUserObject')
     let user = {
-        firstName : form.querySelector(`input[name$="firstName"]`).value,
-        lastName : form.querySelector(`input[name$="lastName"]`).value,
-        age : form.querySelector(`input[name$="age"]`).value,
-        email : form.querySelector(`input[name$="email"]`).value,
-        password : form.querySelector(`input[name$="password"]`).value,
+        firstName: form.querySelector(`input[name$="firstName"]`).value,
+        lastName: form.querySelector(`input[name$="lastName"]`).value,
+        age: form.querySelector(`input[name$="age"]`).value,
+        email: form.querySelector(`input[name$="email"]`).value,
+        password: form.querySelector(`input[name$="password"]`).value,
         roles: []
     }
     for (let role of form.querySelectorAll(`select[name$="roles"] > option`)) {
         if (role.selected == true) {
-            user.roles.push('ROLE_' + role.text)
+            user.roles.push(
+                {
+                    id : role.value,
+                    name : 'ROLE_' +role.text
+                })
         }
     }
     try {
@@ -47,7 +48,6 @@ export function makeUserObject(form) {
 }
 
 export function updateCurrenUser(user) {
-    console.debug('updateCurrenUser')
     const currenUserRow = document.querySelectorAll('#currentUserRow > td')
     currenUserRow[0].innerText = user.id
     currenUserRow[1].innerText = user.firstName
@@ -58,7 +58,7 @@ export function updateCurrenUser(user) {
     for (let role of user.roles) {
         rolesValue.push(`
                 <span>
-                    <span>${role.replace('ROLE_', '')}</span>
+                    <span>${role.name.replace('ROLE_', '')}</span>
                 </span>`)
     }
     currenUserRow[5].innerHTML = rolesValue.join('\n')

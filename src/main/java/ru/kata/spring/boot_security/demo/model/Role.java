@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
@@ -20,11 +22,6 @@ public class Role implements GrantedAuthority {
     @Column(name = "name", unique = true)
     @Enumerated(EnumType.STRING)
     private RoleType name;
-
-    public Role() {
-        //
-    }
-
 
     public Role(RoleType name) {
         this.name = name;
