@@ -32,16 +32,13 @@ public class TestDataInt {
         roleService.saveRole(adminRole);
         roleService.saveRole(userRole);
 
-        if (userService.getAllUsers().isEmpty()) {
-
-            userService.saveUser(new User("Jackie", "Chan", (byte) 69
-                    , "user@mail.ru", "user", new HashSet<>(Set.of(userRole))));
-            userService.saveUser(new User("Bruce", "Lee", (byte) 32
-                    , "admin-user@mail.ru", "admin-user", new HashSet<>(Set.of(adminRole, userRole))));
-            userService.saveUser(new User("Steven", "Seagal", (byte) 71
-                    , "user1@mail.ru", "user1", new HashSet<>(Set.of(userRole))));
-            userService.saveUser(new User("Gordon", "Liu", (byte) 72
-                    , "admin@mail.ru", "admin", new HashSet<>(Set.of(adminRole))));
-        }
+        userService.saveUser(new User("Jackie", "Chan", (byte) 69
+                , "user@mail.ru", "user", new HashSet<>(Set.of(userRole))));
+        userService.saveUser(new User("Bruce", "Lee", (byte) 32
+                , "admin-user@mail.ru", "admin-user", new HashSet<>(Set.of(adminRole, userRole))));
+        userService.saveUser(new User("Steven", "Seagal", (byte) 71
+                , "user1@mail.ru", "user1", new HashSet<>(Set.of(userRole))));
+        userService.saveUser(new User("Gordon", "Liu", (byte) 72
+                , "admin@mail.ru", "admin", new HashSet<>(Set.of(adminRole))));
     }
 }
